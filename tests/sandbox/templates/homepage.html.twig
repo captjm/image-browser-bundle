@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CaptJM Image Browser Sandbox</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background: #f4f7f6;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+        }
+
+        .btn-secondary {
+            background: #2c3e50;
+        }
+
+        .btn-secondary:hover {
+            background: #1a252f;
+        }
+
+        code {
+            background: #eee;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: "Fira Code", monospace;
+            font-size: 0.9em;
+        }
+
+        .features {
+            margin: 25px 0;
+        }
+
+        .features h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .features ul {
+            padding-left: 20px;
+        }
+
+        .features li {
+            margin-bottom: 12px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #2ecc71;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="status-badge">Environment: Development</div>
+    <h1>Image Browser Sandbox</h1>
+    <p>Welcome to the test environment for the <strong>captjm/image-browser-bundle</strong>. This sandbox is configured
+        to help you develop and debug bundle features in isolation.</p>
+
+    <div class="features">
+        <h3>Testable Components:</h3>
+        <ul>
+            <li><strong>EasyAdmin 4:</strong> Verify the <code>CaptJMImageField</code> integration in CRUD controllers.
+            </li>
+            <li><strong>Symfony Forms:</strong> Test the <code>CaptJMImageType</code> widget and CIF Manager modal.</li>
+            <li><strong>REST API:</strong> Debug the <code>FileBrowserController</code> endpoints for browsing and
+                uploads.
+            </li>
+        </ul>
+    </div>
+
+    <div style="margin-top: 30px; display: flex; gap: 15px;">
+        <a href="/admin" class="btn">Open EasyAdmin Panel</a>
+        <a href="https://github.com/captjm/image-browser-bundle" target="_blank" class="btn btn-secondary">View GitHub
+            Repository</a>
+    </div>
+
+    <hr style="margin-top: 40px; border: 0; border-top: 1px solid #eee;">
+
+    <p style="font-size: 0.85rem; color: #7f8c8d;">
+        <strong>System Info:</strong><br>
+        Database: SQLite (<code>var/data.db</code>)<br>
+        Uploads Directory: <code>public/uploads</code><br>
+        Bundle Source: Symlinked from <code>../../src</code>
+    </p>
+</div>
+</body>
+</html>

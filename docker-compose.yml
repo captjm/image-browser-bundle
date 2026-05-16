@@ -9,4 +9,5 @@ services:
       - .:/app
     ports:
       - "8000:8000"
-    command: tail -f /dev/null
+    working_dir: /app/tests/sandbox
+    command: php -S 0.0.0.0:8000 -t public
