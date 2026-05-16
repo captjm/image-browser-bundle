@@ -1,0 +1,46 @@
+{
+    "name": "captjm/image-browser-bundle",
+    "description": "A Symfony bundle providing a CIF-powered image field for forms and EasyAdmin CRUD.",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "CaptJM",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=8.1",
+        "symfony/framework-bundle": "^6.4 || ^7.0",
+        "symfony/form": "^6.4 || ^7.0",
+        "symfony/security-bundle": "^6.4 || ^7.0",
+        "symfony/twig-bundle": "^6.4 || ^7.0"
+    },
+    "require-dev": {
+        "easycorp/easyadmin-bundle": "^4.0",
+        "phpunit/phpunit": "^10.0",
+        "symfony/phpunit-bridge": "^6.4 || ^7.0"
+    },
+    "suggest": {
+        "easycorp/easyadmin-bundle": "Required to use CaptJMImageField in EasyAdmin CRUD pages (^4.0).",
+        "captjm/ckeditor-five-editor": "CIF Manager — React-powered file browser UI. Build dist/editor.js and configure captjm_image_browser.cif_dist_url to point to it."
+    },
+    "autoload": {
+        "psr-4": {
+            "CaptJM\\ImageBrowserBundle\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "CaptJM\\ImageBrowserBundle\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": false
+        }
+    },
+    "config": {
+        "sort-packages": true
+    }
+}

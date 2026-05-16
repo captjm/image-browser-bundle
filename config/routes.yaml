@@ -1,0 +1,11 @@
+# config/routes.yaml  (inside the bundle)
+#
+# In the consuming app, import this file in config/routes.yaml:
+#
+#   captjm_image_browser:
+#       resource: '@CaptJMImageBrowserBundle/config/routes.yaml'
+
+captjm_image_browser_routes:
+    resource: '../src/Controller/'
+    type: attribute
+    prefix: /

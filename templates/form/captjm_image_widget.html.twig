@@ -1,0 +1,190 @@
+{# templates/form/captjm_image_widget.html.twig
+
+   Form theme for CaptJMImageType.
+   Uses the CIF Manager for file browsing.
+
+   Register once in twig.yaml:
+
+       twig:
+           form_themes:
+               - '@CaptJMImageBrowser/form/captjm_image_widget.html.twig'
+#}
+
+{% block captjm_image_widget %}
+    {%- set browse_url = path('captjm_file_browser_browse') -%}
+    {%- set upload_url = path('captjm_file_browser_upload') -%}
+    {%- set root       = browser_root ?? 'uploads' -%}
+    {%- set field_id   = id -%}
+
+    {# -- Hidden input holding the selected image path/URL -- #}
+    {{- block('hidden_widget') -}}
+
+    {# -- Widget wrapper (data-* attrs drive the JS init below) -- #}
+    <div
+        class="captjm-image-widget"
+        data-field-id="{{ field_id }}"
+        data-browse-url="{{ browse_url }}"
+        data-upload-url="{{ upload_url }}"
+        data-browser-root="{{ root }}"
+        data-cif-dist="{{ cif_dist_url }}"
+        style="margin-top: .5rem;"
+    >
+        {# Current image preview #}
+        <div class="captjm-preview" style="margin-bottom: .5rem; min-height: 32px;">
+            {%- if value -%}
+                <img
+                    src="{{ value }}"
+                    alt="Current image"
+                    style="max-height: 120px; max-width: 240px; object-fit: contain;
+                           border: 1px solid #dee2e6; border-radius: 6px; display: block;"
+                >
+            {%- else -%}
+                <span style="color: #6c757d; font-size: .875rem;">No image selected</span>
+            {%- endif -%}
+        </div>
+
+        {# Action buttons #}
+        <button
+            type="button"
+            class="captjm-open-btn btn btn-sm btn-outline-secondary"
+            style="margin-right: .5rem;"
+        >📁 Browse / Upload</button>
+
+        <button
+            type="button"
+            class="captjm-clear-btn btn btn-sm btn-outline-danger"
+        >✕ Clear</button>
+    </div>
+
+    {# -- Bootstrap CIF Manager for this widget -- #}
+    {#
+       CIF Manager (window.cifOpen / window.cifUpload) must be loaded on the
+       page BEFORE this script runs.  Load it once in your base layout:
+
+           <script src="{{ cif_dist_url }}"></script>
+
+       Or initialise it yourself:
+
+           const cif = new CifManager({ apiUrl: '/admin/file-browser/browse', rootPath: 'uploads' });
+           cif.expose();
+
+       This inline script is intentionally scoped to the single widget it
+       follows, so multiple fields on the same page work independently.
+    #}
+    <script>
+    (function () {
+        // Locate the widget DOM node right above this <script> tag.
+        var scripts  = document.currentScript
+            ? [document.currentScript]
+            : document.querySelectorAll('script');
+        var script   = document.currentScript || scripts[scripts.length - 1];
+        var widget   = script.previousElementSibling;
+
+        if (!widget || !widget.classList.contains('captjm-image-widget')) {
+            console.warn('[CaptJMImage] Could not find widget element.');
+            return;
+        }
+
+        var fieldId    = widget.dataset.fieldId;
+        var browseUrl  = widget.dataset.browseUrl;
+        var uploadUrl  = widget.dataset.uploadUrl;
+        var browserRoot = widget.dataset.browserRoot;
+        var cifDist    = widget.dataset.cifDist;
+
+        var input      = document.getElementById(fieldId);
+        var preview    = widget.querySelector('.captjm-preview');
+        var openBtn    = widget.querySelector('.captjm-open-btn');
+        var clearBtn   = widget.querySelector('.captjm-clear-btn');
+
+        // -- Lazy-load CIF Manager script once, then init ------------------
+        function ensureCif(callback) {
+            if (typeof window.cifOpen === 'function') {
+                callback();
+                return;
+            }
+            // CIF not yet on the page - load it dynamically
+            if (document.querySelector('script[data-cif-loaded]')) {
+                // Already loading; wait for it
+                document.addEventListener('captjm:cif-ready', callback, { once: true });
+                return;
+            }
+            var s = document.createElement('script');
+            s.src = cifDist;
+            s.setAttribute('data-cif-loaded', '1');
+            s.onload = function () {
+                // CIF Manager exposes CifManager class on window.
+                // Initialize it if not already done (once per page).
+                if (typeof window.CifManager !== 'undefined' && typeof window.cifOpen !== 'function') {
+                    var mgr = new window.CifManager({
+                        apiUrl:   browseUrl,
+                        rootPath: browserRoot,
+                    });
+                    mgr.expose(); // registers window.cifOpen + window.cifUpload
+                }
+                document.dispatchEvent(new Event('captjm:cif-ready'));
+                callback();
+            };
+            s.onerror = function () {
+                console.error('[CaptJMImage] Failed to load CIF Manager from: ' + cifDist);
+            };
+            document.head.appendChild(s);
+        }
+
+        // -- Called when CIF Manager selects a file ------------------------
+        // Adjust this callback signature to match your CIF Manager version.
+        // From the CIF Manager README the callback receives a file object:
+        //   { name: string, path: string, url: string }
+        function onFileSelected(file) {
+            if (!file || !file.url) return;
+
+            if (input) input.value = file.url;
+
+            if (preview) {
+                preview.innerHTML =
+                    '<img src="' + esc(file.url) + '" alt="" ' +
+                    'style="max-height:120px;max-width:240px;object-fit:contain;' +
+                    'border:1px solid #dee2e6;border-radius:6px;display:block;">';
+            }
+
+            // Notify the rest of the app (e.g. EasyAdmin live-preview hooks)
+            input && input.dispatchEvent(new CustomEvent('captjm:image-selected', {
+                bubbles: true,
+                detail:  file,
+            }));
+        }
+
+        // -- Open button ---------------------------------------------------
+        openBtn && openBtn.addEventListener('click', function () {
+            ensureCif(function () {
+                if (typeof window.cifOpen !== 'function') {
+                    console.error('[CaptJMImage] window.cifOpen is not available.');
+                    return;
+                }
+                // CIF Manager API:  window.cifOpen(callback, options?)
+                // The callback receives the selected file object.
+                // See captjm/ckeditor-five-editor → src/cif/CifManager.tsx
+                window.cifOpen(onFileSelected, {
+                    rootPath:  browserRoot,
+                    browseUrl: browseUrl,
+                    uploadUrl: uploadUrl,
+                });
+            });
+        });
+
+        // -- Clear button --------------------------------------------------
+        clearBtn && clearBtn.addEventListener('click', function () {
+            if (input)   input.value = '';
+            if (preview) preview.innerHTML =
+                '<span style="color:#6c757d;font-size:.875rem">No image selected</span>';
+            input && input.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+
+        // -- Tiny XSS helper -----------------------------------------------
+        function esc(str) {
+            return String(str)
+                .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+                .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+    }());
+    </script>
+{% endblock %}

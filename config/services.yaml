@@ -1,0 +1,20 @@
+# config/services.yaml  (inside the bundle, not the app)
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    CaptJM\ImageBrowserBundle\Controller\FileBrowserController:
+        public: true
+        tags: ['controller.service_arguments']
+        arguments:
+            $uploadsDir: '%captjm_image_browser.uploads_dir%'
+            $uploadsWebPath: '%captjm_image_browser.uploads_web_path%'
+            $allowedExtensions: '%captjm_image_browser.allowed_extensions%'
+            $maxFileSize: '%captjm_image_browser.max_file_size%'
+
+    CaptJM\ImageBrowserBundle\Form\CaptJMImageType:
+        tags:
+            - { name: form.type }

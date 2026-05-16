@@ -1,0 +1,3 @@
+# tests/sandbox/config/packages/captjm_image_browser.yaml
+captjm_image_browser:
+    cif_dist_url: "https://github.com/captjm/ckeditor-five-editor/blob/main/dist/cif.js"

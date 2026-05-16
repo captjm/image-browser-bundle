@@ -1,0 +1,16 @@
+# / .gitignore
+
+/vendor/
+
+/var/
+/.phpunit.result.cache
+.phpunit.cache/
+
+.env.local
+.env.local.php
+.env.tests.local
+
+.idea/
+.vscode/
+
+*.db

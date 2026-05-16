@@ -1,0 +1,12 @@
+# docker-compose.yml
+services:
+  php:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: bundle_dev_php
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    command: tail -f /dev/null

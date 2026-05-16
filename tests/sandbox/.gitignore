@@ -1,0 +1,17 @@
+# /tests/sandbox/.gitignore
+
+/vendor/
+
+/var/
+
+/public/bundles/
+/public/build/
+
+.env.dev
+.env.local
+.env.local.php
+.env.tests.local
+
+/var/*.db
+
+/config/secrets/*.dev.libs.php

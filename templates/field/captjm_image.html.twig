@@ -1,0 +1,10 @@
+{# templates/field/captjm_image.html.twig #}
+{% if field.value %}
+    <img
+        src="{{ field.value }}"
+        alt="{{ field.label ?? '' }}"
+        style="max-height: 80px; max-width: 160px; object-fit: contain; border-radius: 4px;"
+    >
+{% else %}
+    <span class="badge badge-secondary">No image</span>
+{% endif %}
